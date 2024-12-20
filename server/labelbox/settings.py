@@ -113,7 +113,8 @@ WSGI_APPLICATION = 'labelbox.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-if 'RDS_HOSTNAME' in os.environ:
+if os.environ.get('DB_NAME') is not None:
+    print("True", os.environ.get('DB_NAME'))
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -132,6 +133,7 @@ if 'RDS_HOSTNAME' in os.environ:
     }
 
 else:
+    print("False")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',

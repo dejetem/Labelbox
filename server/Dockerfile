@@ -11,19 +11,28 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Create and set working directory
+# create root directory for our project in the container
+RUN mkdir /app
+
+# Set the working directory
 WORKDIR /app
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install gunicorn mysqlclient
+# Copy the current directory contents into the container 
+COPY . /app/
+COPY .env /app/.env
+# Copy SSL certificate
+COPY ca.pem /path/to/ca.pem
 
-# Copy project files
-COPY . .
+# Install any needed packages specified in requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Run gunicorn
-CMD gunicorn labelbox.wsgi:application --bind 0.0.0.0:$PORT --workers 4
+# Add migration script
+COPY ./entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

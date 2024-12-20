@@ -8,26 +8,35 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   backend:
     build: .
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    command: >
+      bash -c "python manage.py wait_for_db &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
     container_name: app
     volumes:
       - .:/app
-      - ./ca.pem:/path/to/ca.pem  # Mount SSL certificate
+      - ./ca.pem:/path/to/ca.pem
+      - ./.env:/path/to/.env
     ports:
       - "8000:8000"
-    environment:
-      DB_HOST: db
-      DB_NAME: 'labelbox'
-      DB_USER: 'root'
-      DB_PASSWORD: 'password'
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KE: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    # environment:
+    #   DB_HOST: db
+    #   DB_NAME: 'labelbox'
+    #   DB_USER: 'root'
+    #   DB_PASSWORD: 'password'
+    #   CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+    #   CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+    #   CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   mysql_data:
