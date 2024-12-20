@@ -8,13 +8,27 @@ import ProjectDetail from './pages/ProjectDetail';
 import AnnotationView from './pages/AnnotationView';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css'
+import PublicRoute from './components/PublicRoute';
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
         <Route
           path="/projects"
           element={
