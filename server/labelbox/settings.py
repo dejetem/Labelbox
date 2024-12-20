@@ -125,7 +125,7 @@ if os.environ.get('DB_NAME') is not None:
             'PORT': os.environ.get('DB_PORT'),
             'OPTIONS': {
             'ssl': {
-                'ca': '/path/to/ca.pem',
+                'ca': os.path.join(BASE_DIR, 'ca.pem'),
                 'verify_cert': True,
             },
         }
