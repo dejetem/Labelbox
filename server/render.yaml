@@ -1,0 +1,30 @@
+# render.yaml
+services:
+  - type: web
+    name: labelbox
+    env: docker
+    buildCommand: docker build -t labelbox .
+    startCommand: gunicorn labelbox.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DB_HOST
+        value: your-mysql-host.aivencloud.com
+      - key: DB_PORT
+        value: your-port
+      - key: DB_NAME
+        value: your-db-name
+      - key: DB_USER
+        value: your-username
+      - key: DB_PASSWORD
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: WEB_CONCURRENCY
+        value: 4

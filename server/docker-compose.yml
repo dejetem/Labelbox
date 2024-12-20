@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'labelbox'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: .
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    container_name: app
+    volumes:
+      - .:/app
+      - ./ca.pem:/path/to/ca.pem  # Mount SSL certificate
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_NAME: 'labelbox'
+      DB_USER: 'root'
+      DB_PASSWORD: 'password'
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KE: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

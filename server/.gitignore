@@ -1,0 +1,21 @@
+# SSL certificates
+*.pem
+
+# Environment variables
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+staticfiles/
+media/
+
+# Docker
+docker-compose.override.yml
