@@ -124,11 +124,10 @@ if os.environ.get('DB_NAME') is not None:
             'HOST': os.environ.get('DB_HOST'),
             'PORT': os.environ.get('DB_PORT'),
             'OPTIONS': {
-            'ssl': {
-                'ca': os.path.join(BASE_DIR, 'ca.pem'),
-                'verify_cert': True,
+                'ssl': {
+                    'ca': '/etc/secrets/ca.pem',
+                },
             },
-        }
         }
     }
 
