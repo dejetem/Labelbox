@@ -5,9 +5,10 @@ import { Project } from '../types';
 interface Props {
   project: Project;
   onDelete: (id: number) => void;
+  isLoading: boolean;
 }
 
-const ProjectCard: React.FC<Props> = ({ project, onDelete }) => {
+const ProjectCard: React.FC<Props> = ({ project, onDelete,  isLoading}) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6">
@@ -25,9 +26,10 @@ const ProjectCard: React.FC<Props> = ({ project, onDelete }) => {
           </Link>
           <button
             onClick={() => onDelete(project.id)}
-            className="text-red-600 hover:text-red-800"
+            className="text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            Delete
+            {isLoading ? "please wait" : "Delete"}
           </button>
         </div>
       </div>

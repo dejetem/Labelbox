@@ -8,6 +8,8 @@ const Projects: React.FC = () => {
     const [projectsList, setProjectsList] = useState<Project[]>([]);
     const [newProject, setNewProject] = useState({ name: '', description: '' });
     const [showForm, setShowForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
     const fetchProjects = async () => {
@@ -26,21 +28,27 @@ const Projects: React.FC = () => {
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setLoading(true);
             await projects.create(newProject);
             setNewProject({ name: '', description: '' });
             setShowForm(false);
             fetchProjects();
         } catch {
             setError('Failed to create project');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDeleteProject = async (id: number) => {
         try {
+            setIsLoading(true);
             await projects.delete(id);
             fetchProjects();
         } catch {
             setError('Failed to delete project');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -85,9 +93,10 @@ const Projects: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={loading}
                         >
-                            Create Project
+                            {loading ? 'please wait' : 'Create Project' }
                         </button>
                     </form>
                 )}
@@ -98,6 +107,7 @@ const Projects: React.FC = () => {
                             key={project.id}
                             project={project}
                             onDelete={handleDeleteProject}
+                            isLoading={isLoading}
                         />
                     ))}
                 </div>

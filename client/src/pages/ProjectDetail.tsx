@@ -10,6 +10,8 @@ const ProjectDetail: React.FC = () => {
     const [project, setProject] = useState<Project | null>(null);
     const [imagesList, setImagesList] = useState<Image[]>([]);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const fetchProject = async () => {
         try {
@@ -40,20 +42,26 @@ const ProjectDetail: React.FC = () => {
         const file = event.target.files?.[0];
         if (file && id) {
             try {
+                setLoading(true)
                 await images.upload(Number(id), file);
                 fetchImages();
             } catch {
                 setError('Failed to upload image');
+            } finally {
+                setLoading(false);
             }
         }
     };
 
     const handleDeleteImage = async (imageId: number) => {
         try {
+            setIsLoading(true);
             await images.delete(imageId);
             fetchImages();
         } catch {
             setError('Failed to delete image');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -66,13 +74,15 @@ const ProjectDetail: React.FC = () => {
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">{project.name}</h1>
-                    <label className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
-                        Upload Image
+                    <label className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer ${loading ? 'opacity-50 pointer-events-none' : ''
+                        }`}>
+                        {loading ? "please wait" : "Upload Image"}
                         <input
                             type="file"
                             className="hidden"
                             accept="image/*"
                             onChange={handleImageUpload}
+                            disabled={loading}
                         />
                     </label>
                 </div>
@@ -83,7 +93,7 @@ const ProjectDetail: React.FC = () => {
                     <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>
                 )}
 
-                <ImageList images={imagesList} onDelete={handleDeleteImage} />
+                <ImageList images={imagesList} onDelete={handleDeleteImage} isLoading={isLoading} />
             </div>
         </Layout>
     );

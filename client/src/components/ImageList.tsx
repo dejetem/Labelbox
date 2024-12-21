@@ -5,9 +5,10 @@ import { Image } from '../types';
 interface Props {
   images: Image[];
   onDelete: (id: number) => void;
+  isLoading: boolean;
 }
 
-const ImageList: React.FC<Props> = ({ images, onDelete }) => {
+const ImageList: React.FC<Props> = ({ images, onDelete, isLoading }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {images.map((image) => (
@@ -27,9 +28,10 @@ const ImageList: React.FC<Props> = ({ images, onDelete }) => {
               </Link>
               <button
                 onClick={() => onDelete(image.id)}
-                className="text-red-600 hover:text-red-800"
+                className="text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                Delete
+                {isLoading ? "please wait" : "Delete"}
               </button>
             </div>
           </div>

@@ -7,16 +7,20 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setLoading(true);
             const response = await auth.login(email, password);
             setToken(response.data.access);
             navigate('/projects');
         } catch {
             setError('Invalid credentials');
+        }finally {
+            setLoading(false);
         }
     };
 
@@ -54,9 +58,10 @@ const Login: React.FC = () => {
                     </div>
                     <button
                         type="submit"
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={loading}
                     >
-                        Sign in
+                        {loading ? "please wait" : "Sign in"}
                     </button>
                 </form>
                 <div className="text-center">
