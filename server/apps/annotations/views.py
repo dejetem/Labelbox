@@ -21,6 +21,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ImageSerializer
     def get_queryset(self):
+        # For detail actions (delete), don't require project parameter
+        if self.action in ['destroy']:
+            return Image.objects.all()
         project = self.request.query_params.get('project', None)
 
         if project is None:
@@ -30,7 +33,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             )
         
         if project is not None:
-            return Image.objects.filter(project_id=project)
+            return Image.objects.filter(project=project)
         
 
 
