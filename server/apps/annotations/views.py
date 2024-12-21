@@ -30,7 +30,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             )
         
         if project is not None:
-            return Image.object.filter(project_id=project)
+            return Image.objects.filter(project_id=project)
         
 
 
