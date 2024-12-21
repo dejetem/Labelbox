@@ -20,7 +20,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ImageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ImageSerializer
-    queryset = Image.objects.all()
+    def get_queryset(self):
+        project = self.request.query_params.get('project', None)
+
+        if project is None:
+            return Response(
+                {'error': 'project_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if project is not None:
+            return Image.object.filter(project_id=project)
+        
+
 
     @action(detail=False, methods=['POST'])
     def upload(self, request):
